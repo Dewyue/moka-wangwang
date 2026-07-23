@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#fff2dc" />
+<title>别按！摩卡会叫🐶 超级解压</title>
+<meta name="description" content="点击屏幕，摩卡跟着节拍叫起来，把烦恼通通赶走，还能攒尾巴卷度！超级解压，开始游戏。" />
+<!-- 微信/社交分享卡（订阅号无 JSSDK 自定义权限，走 og 标签由平台自动抓取） -->
+<meta property="og:title" content="别按！摩卡会叫🐶 超级解压" />
+<meta property="og:description" content="点击屏幕，摩卡跟着节拍叫起来，把烦恼通通赶走，攒尾巴卷度！超级解压，开始游戏。" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://dewyue.github.io/moka-wangwang/" />
+<meta property="og:image" content="https://dewyue.github.io/moka-wangwang/Image/share-thumb.jpg" />
+<meta property="og:image:type" content="image/jpg" />
+<meta property="og:image:width" content="500" />
+<meta property="og:image:height" content="500" />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐶</text></svg>" />
+<style>
+  /* 全页面限定调色板：米白底 + 主色黄 + 次色灰（极少点缀色） */
+  :root {
+    --cream: #fff2dc;   /* 背景 · 米白 */
+    --amber: #ffb400;   /* 主色 · 黄 */
+    --gray:  #87837e;   /* 次要 · 灰 */
+    --coral: #ff5a5f;   /* 点缀（少量） */
+    --teal:  #16c2a3;   /* 点缀（少量） */
+    --blue:  #3e7bfa;   /* 点缀（少量） */
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { height: 100%; overflow: hidden; }
+  /* 自定义“食指指向”手形光标：默认使用 Image/hand-cursor.svg，按下时切换为按压形态。
+     用 * + !important 强制整页所有元素统一使用这两个形状，
+     避免指针划过不同元素时在形状之间反复闪动。 */
+  :root {
+    --cursor-hand: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MiA3MiIgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiPgogIDxkZWZzPgogICAgPCEtLSDmiYvlnovljp/lp4vot6/lvoTvvIzpgJrov4cgdXNlIOW8leeUqOWkjeeUqCAtLT4KICAgIDxwYXRoIGlkPSJoYW5kIiBkPSJNIDI2LjE4OTQ1MyAxMC4wMDk3NjYgQyAyNS42NjA3NjggMTAuMDE4MzIyIDI1LjEwNzQ1MyAxMC4wODI0MDYgMjQuNTMzMjAzIDEwLjIwNzAzMSBDIDIwLjUzODIwMyAxMS4wNzQwMzEgMTguNDQ3Mzc1IDE1LjMwNDk4NCAxOS43MzQzNzUgMTkuNzA4OTg0IEMgMjAuMzU2Mzc1IDIxLjgzNjk4NCAyMi45MDYyNSAzMC4yNjM2NzIgMjIuOTA2MjUgMzAuMjYzNjcyIEMgMjIuOTA2MjUgMzAuMjYzNjcyIDIwLjY0NjA3OCAyOC4yNDIxODggMTcuNTgwMDc4IDI4LjI0MjE4OCBDIDE0LjY5OTA3OCAyOC4yNDIxODggMTEuNTc4MTI1IDMwLjkwNTgyOCAxMS41NzgxMjUgMzQuNjczODI4IEMgMTEuNTc4MTI1IDM4Ljk5NTgyOCAxNC4zMDM2NTYgMzkuOTM0MjAzIDE4LjIyMjY1NiA0Ni43ODMyMDMgQyAyMS4xMTE2NTYgNTEuODMyMjAzIDI1LjM5MjU5NCA1My44MzA1OTQgMjYuMzA4NTk0IDU1LjgwODU5NCBDIDI3LjEyMTU5NCA1Ny41NjQ1OTQgMjYuMzA5MjAzIDU5LjAxMjY1NiAyNy4yODMyMDMgNjAuNTk3NjU2IEMgMjcuODcxMjAzIDYxLjU1NTY1NiAyOS40MTQ1NDcgNjIgMjkuODEwNTQ3IDYyIEwgMzcuNjM4NjcyIDYyIEMgMzkuODA2NjcyIDYyIDQyLjAxNzU3OCA1OS41NjA1NDcgNDIuMDE3NTc4IDU5LjU2MDU0NyBDIDQyLjAxNzU3OCA1OS41NjA1NDcgNDMuNzgwOTUzIDYyIDQ3LjAwMTk1MyA2MiBMIDUxLjc4MzIwMyA2MiBDIDUzLjU0MjIwMyA2MiA1My44NDk1NjIgNjEuMTgwNjA5IDU0LjIyNjU2MiA2MC41OTk2MDkgQyA1NC42MDM1NjMgNjAuMDE3NjA5IDU0LjQ3NjU2MiA1OC4zMDU3OTcgNTQuNDc2NTYyIDU2LjU5MTc5NyBDIDU0LjQ3NjU2MiA1MC4xMjc3OTcgNjAuOTk0MTQxIDQ5Ljg4OTQ4NCA2MC45OTQxNDEgMzcuNTIxNDg0IEMgNjAuOTk0MTQxIDM2LjU2MDQ4NCA2MSAzMi4wOTg2ODcgNjEgMzEuODA0Njg4IEMgNjEgMjguMjQ3Njg3IDYwLjI1NzUzMSAyNi40MjExNDEgNTcuNTE5NTMxIDI1LjI0NDE0MSBDIDU1LjA0NTUzMSAyNC4xODExNDEgNTIuNzkyOTY5IDI1LjY3MTg3NSA1Mi43OTI5NjkgMjUuNjcxODc1IEMgNTIuNzkyOTY5IDI1LjY3MTg3NSA1MS41NjUxODggMjMuMTI3ODEzIDQ4LjI0MjE4OCAyMi41MDc4MTIgQyA0NC43MTcxODggMjEuODUwODEzIDQyLjU3MDMxMiAyMy43MzYzMjggNDIuNTcwMzEyIDIzLjczNjMyOCBDIDQyLjU3MDMxMiAyMy43MzYzMjggNDEuNjAxNjg3IDIyLjM5NDg1OSAzOS4xNzk2ODggMjEuODgwODU5IEMgMzYuOTQ2Njg4IDIxLjQwNjg1OSAzNS4yMjI2NTYgMjIuMjgzMjAzIDM1LjIyMjY1NiAyMi4yODMyMDMgQyAzNS4yMjI2NTYgMjIuMjgzMjAzIDM0LjMzMDg0NCAxOC4yOTQ4NzUgMzMuNTg5ODQ0IDE2LjA0Njg3NSBDIDMyLjQ1MzIxOSAxMi41OTc2MjUgMjkuODkwMjUyIDkuOTQ5ODY5MSAyNi4xODk0NTMgMTAuMDA5NzY2IHogTSAyNi4zMTQ0NTMgMTUuOTYwOTM4IEMgMjcuMTMyNjQ2IDE1Ljk2MDQxOCAyNy41NzUxNTYgMTYuOTgwMDYzIDI3Ljc4NTE1NiAxNy42MzI4MTIgQyAyOC4zMDMxNTYgMTkuMjQzODEzIDMxLjk2MjQ1MyAzMC41NDY1NjMgMzIuNTY0NDUzIDMyLjIyNjU2MiBDIDMzLjEwNDQ1MyAzMy43MzI1NjMgMzMuNzI3MTg3IDMyLjc1NTMxMyAzMy44NjcxODggMzIuMDcwMzEyIEMgMzQuMzM2MTg4IDI5Ljc3NTMxMiAzNS42MTQ3MDMgMjcuNjM3OTIyIDM3Ljk3MDcwMyAyNy43OTQ5MjIgQyA0MC45MTY3MDMgMjcuOTkxOTIyIDQwLjg1NzU0NyAzMS4yNDI1NDcgNDEuMDYwNTQ3IDMzLjE4NTU0NyBDIDQxLjE2OTU0NyAzNC4yMjE1NDcgNDIuMTc1NDA2IDM0LjEyMDk4NCA0Mi40NDE0MDYgMzMuMjA4OTg0IEMgNDIuNzI0NDA2IDMyLjIzODk4NCA0My41NjI2NzIgMjguMzcxODU5IDQ2LjUxMzY3MiAyOC42MzA4NTkgQyA0OS42ODA2NzIgMjguOTA4ODU5IDQ4Ljg0NjI2NiAzMi42Mzc3NjYgNDguODIyMjY2IDMzLjYzNDc2NiBDIDQ4Ljc5OTI2NiAzNC41OTc3NjYgNDkuNzI5NzM0IDM0LjU5Njc2NiA1MC4zMDI3MzQgMzMuNjM0NzY2IEMgNTAuOTIwNzM0IDMyLjU5Nzc2NiA1MS44MjUzOTEgMzEuODkyOTA2IDUzLjE1MDM5MSAzMi4yNTM5MDYgQyA1NC4zOTkzOTEgMzIuNTk0OTA2IDU0Ljk3NzU2MiAzMy42MTIzNzUgNTQuOTc2NTYyIDM1LjEwOTM3NSBDIDU0Ljk3NjU2MiAzNS41NzMzNzUgNTQuOTcyNjU2IDM3LjUxOTUzMSA1NC45NzI2NTYgMzcuNTE5NTMxIEMgNTQuOTcyNjU2IDQyLjc3NzUzMSA1My42MTQ5MjIgNDQuNjg2NDM3IDUyLjA0NDkyMiA0Ni44OTg0MzggQyA1MC43Nzc5MjIgNDguNjgxNDM3IDQ4LjkzMzM3NSA1MS40NDA0NTMgNDguNjA5Mzc1IDU0LjQzOTQ1MyBDIDQ4LjU2NDM3NSA1NC44NTc0NTMgNDguNDMwMDYyIDU1LjM0MDY0MSA0OC4xNjQwNjIgNTUuNTU2NjQxIEMgNDcuODk4MDYzIDU1Ljc3MjY0MSA0Ni4yNjc1NzggNTUuOTc2NTYyIDQ2LjI2NzU3OCA1NS45NzY1NjIgQyA0Ni4yNjY1NzggNTUuOTc1NTYzIDQ0LjA2MTg5MSA1NS4wNzY1MzEgNDMuNTg3ODkxIDU0LjUxOTUzMSBDIDQyLjg2Mzg5MSA1My42Njk1MzEgNDEuNjY1MzI4IDUzLjY2NDg1OSA0MC45ODYzMjggNTQuMjU1ODU5IEMgNDAuNjI3MzI4IDU0LjU2Nzg1OSAzOS4yMTMyNjYgNTUuOTc2NTYyIDM4LjMyMjI2NiA1NS45NzY1NjIgTCAzMy4zMjAzMTIgNTUuOTc2NTYyIEMgMzIuNjcyMzEzIDU1Ljk3NjU2MiAzMi41MDE5NjkgNTUuNTQ4NjcyIDMyLjQxNzk2OSA1NS4yNjM2NzIgQyAzMi4xMjY5NjkgNTQuMjgwNjcyIDMxLjU1MjI1IDUyLjg1MjIxOSAzMS4wMzEyNSA1Mi4xOTkyMTkgQyAyOS42ODIyNSA1MC41MDgyMTkgMjkuMzA1NzM0IDQ5Ljk1MjUzMSAyNy44MDI3MzQgNDguNjQ0NTMxIEMgMjYuMjU3NzM0IDQ3LjI5OTUzMSAyNC41NzUyNjYgNDUuOTU0MDE2IDIzLjQ0NzI2NiA0My43OTEwMTYgQyAyMS4wNzAyNjYgMzkuMjMzMDE2IDE3LjU5NzY1NiAzNi44NzU5MjIgMTcuNTk3NjU2IDM1LjA0NDkyMiBDIDE3LjU5NzY1NiAzNC40ODk5MjIgMTguNTEzMjAzIDM0LjI3NzM0NCAxOC43ODMyMDMgMzQuMjc3MzQ0IEMgMTkuMzQ2MjAzIDM0LjI3NzM0NCAyMC4zNzExNzIgMzQuMTExNjcyIDI0LjIwMTE3MiAzNi4yNjM2NzIgQyAyNy4zNjcxNzIgMzguMDQyNjcyIDMwLjExMTIwMyAzNC45ODQ2NTYgMjkuNDA4MjAzIDMyLjM0NzY1NiBDIDI4LjgyMjIwMyAzMC4xNDc2NTYgMjYuMTU5NDM3IDIwLjI0Mjc4MSAyNS41MjM0MzggMTguMTc1NzgxIEMgMjUuMjcwNDM3IDE3LjM1NDc4MSAyNS4xMzQ0NTMgMTYuMzA1MzQ0IDI1LjkzOTQ1MyAxNi4wMjczNDQgQyAyNi4wNzIwNzggMTUuOTgxNTk0IDI2LjE5NzU2OCAxNS45NjEwMTIgMjYuMzE0NDUzIDE1Ljk2MDkzOCB6IE0gMzYgNDEgQyAzNS40NDggNDEgMzUgNDEuNDQ4IDM1IDQyIEwgMzUgNTAgQyAzNSA1MC41NTIgMzUuNDQ4IDUxIDM2IDUxIEMgMzYuNTUyIDUxIDM3IDUwLjU1MiAzNyA1MCBMIDM3IDQyIEMgMzcgNDEuNDQ4IDM2LjU1MiA0MSAzNiA0MSB6IE0gNDEgNDEgQyA0MC40NDggNDEgNDAgNDEuNDQ4IDQwIDQyIEwgNDAgNTAgQyA0MCA1MC41NTIgNDAuNDQ4IDUxIDQxIDUxIEMgNDEuNTUyIDUxIDQyIDUwLjU1MiA0MiA1MCBMIDQyIDQyIEMgNDIgNDEuNDQ4IDQxLjU1MiA0MSA0MSA0MSB6IE0gNDYgNDEgQyA0NS40NDggNDEgNDUgNDEuNDQ4IDQ1IDQyIEwgNDUgNTAgQyA0NSA1MC41NTIgNDUuNDQ4IDUxIDQ2IDUxIEMgNDYuNTUyIDUxIDQ3IDUwLjU1MiA0NyA1MCBMIDQ3IDQyIEMgNDcgNDEuNDQ4IDQ2LjU1MiA0MSA0NiA0MSB6Ii8+CiAgICA8IS0tIOiCieiJsua4kOWPmO+8muS4iua1heS4i+a3se+8jOabtOeri+S9k+mlsea7oSAtLT4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0ic2tpbiIgeDE9IjAiIHkxPSIwIiB4Mj0iMCIgeTI9IjEiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiNGRERGQzAiLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjRjJCOThEIi8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgzNiAzNikgc2NhbGUoMS4wNSkgdHJhbnNsYXRlKC0zNiAtMzYpIj4KICAgIDwhLS0g5bqV5bGC5byV55So77ya5rex6Imy5o+P6L655ZCR5aSW5omp5bGV77yM5b2i5oiQ5ZyG5ram6aWx5ruh55qE6L2u5buTIC0tPgogICAgPHVzZSBocmVmPSIjaGFuZCIgZmlsbD0iI0UyQTA2QyIgc3Ryb2tlPSIjQzk3RjRBIiBzdHJva2Utd2lkdGg9IjQuNSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+CiAgICA8IS0tIOmhtuWxguW8leeUqO+8muiCieiJsua4kOWPmOS4u+S9k++8jOmVguepuue7huiKgumAj+WHuuW6leWxgua3seiJsu+8jOW9ouaIkOaMh+e8neS4juaOjOe6uee6v+adoSAtLT4KICAgIDx1c2UgaHJlZj0iI2hhbmQiIGZpbGw9InVybCgjc2tpbikiLz4KICA8L2c+Cjwvc3ZnPgo=") 45 16, pointer;
+    --cursor-hand-press: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA3MiA3MiIgd2lkdGg9IjEyOCIgaGVpZ2h0PSIxMjgiPgogIDxkZWZzPgogICAgPCEtLSDmiYvlnovljp/lp4vot6/lvoTvvIjpo5/mjIflvK/mm7LnmoTmjInljovlvaLmgIHvvInvvIzpgJrov4cgdXNlIOW8leeUqOWkjeeUqCAtLT4KICAgIDxwYXRoIGlkPSJoYW5kIiBkPSJNIDI5LjQgMTcuMCBDIDI4LjcgMTYuOSAyNy45IDE2Ljk1IDI3LjEgMTcuMTUgQyAyMy40IDE4LjIgMjEuMiAyMS44IDIyLjIgMjUuNiBDIDIyLjcgMjcuNiAyMi44NSAyOS4yIDIyLjkwNjI1IDMwLjI2MzY3MiBDIDIyLjkwNjI1IDMwLjI2MzY3MiAyMC42NDYwNzggMjguMjQyMTg4IDE3LjU4MDA3OCAyOC4yNDIxODggQyAxNC42OTkwNzggMjguMjQyMTg4IDExLjU3ODEyNSAzMC45MDU4MjggMTEuNTc4MTI1IDM0LjY3MzgyOCBDIDExLjU3ODEyNSAzOC45OTU4MjggMTQuMzAzNjU2IDM5LjkzNDIwMyAxOC4yMjI2NTYgNDYuNzgzMjAzIEMgMjEuMTExNjU2IDUxLjgzMjIwMyAyNS4zOTI1OTQgNTMuODMwNTk0IDI2LjMwODU5NCA1NS44MDg1OTQgQyAyNy4xMjE1OTQgNTcuNTY0NTk0IDI2LjMwOTIwMyA1OS4wMTI2NTYgMjcuMjgzMjAzIDYwLjU5NzY1NiBDIDI3Ljg3MTIwMyA2MS41NTU2NTYgMjkuNDE0NTQ3IDYyIDI5LjgxMDU0NyA2MiBMIDM3LjYzODY3MiA2MiBDIDM5LjgwNjY3MiA2MiA0Mi4wMTc1NzggNTkuNTYwNTQ3IDQyLjAxNzU3OCA1OS41NjA1NDcgQyA0Mi4wMTc1NzggNTkuNTYwNTQ3IDQzLjc4MDk1MyA2MiA0Ny4wMDE5NTMgNjIgTCA1MS43ODMyMDMgNjIgQyA1My41NDIyMDMgNjIgNTMuODQ5NTYyIDYxLjE4MDYwOSA1NC4yMjY1NjIgNjAuNTk5NjA5IEMgNTQuNjAzNTYzIDYwLjAxNzYwOSA1NC40NzY1NjIgNTguMzA1Nzk3IDU0LjQ3NjU2MiA1Ni41OTE3OTcgQyA1NC40NzY1NjIgNTAuMTI3Nzk3IDYwLjk5NDE0MSA0OS44ODk0ODQgNjAuOTk0MTQxIDM3LjUyMTQ4NCBDIDYwLjk5NDE0MSAzNi41NjA0ODQgNjEgMzIuMDk4Njg3IDYxIDMxLjgwNDY4OCBDIDYxIDI4LjI0NzY4NyA2MC4yNTc1MzEgMjYuNDIxMTQxIDU3LjUxOTUzMSAyNS4yNDQxNDEgQyA1NS4wNDU1MzEgMjQuMTgxMTQxIDUyLjc5Mjk2OSAyNS42NzE4NzUgNTIuNzkyOTY5IDI1LjY3MTg3NSBDIDUyLjc5Mjk2OSAyNS42NzE4NzUgNTEuNTY1MTg4IDIzLjEyNzgxMyA0OC4yNDIxODggMjIuNTA3ODEyIEMgNDQuNzE3MTg4IDIxLjg1MDgxMyA0Mi41NzAzMTIgMjMuNzM2MzI4IDQyLjU3MDMxMiAyMy43MzYzMjggQyA0Mi41NzAzMTIgMjMuNzM2MzI4IDQxLjYwMTY4NyAyMi4zOTQ4NTkgMzkuMTc5Njg4IDIxLjg4MDg1OSBDIDM2Ljk0NjY4OCAyMS40MDY4NTkgMzUuMjIyNjU2IDIyLjI4MzIwMyAzNS4yMjI2NTYgMjIuMjgzMjAzIEMgMzUuMjIyNjU2IDIyLjI4MzIwMyAzNC4xIDE5LjYgMzMuMyAxOC42IEMgMzIuNSAxNy42IDMwLjkgMTcuMCAyOS40IDE3LjAgeiBNIDI4LjkgMjEuMyBDIDI5LjcgMjEuMyAzMC4wNSAyMi4xIDMwLjI1IDIyLjcgQyAzMC43NSAyNC4zIDMxLjk2MjQ1MyAzMC41NDY1NjMgMzIuNTY0NDUzIDMyLjIyNjU2MiBDIDMzLjEwNDQ1MyAzMy43MzI1NjMgMzMuNzI3MTg3IDMyLjc1NTMxMyAzMy44NjcxODggMzIuMDcwMzEyIEMgMzQuMzM2MTg4IDI5Ljc3NTMxMiAzNS42MTQ3MDMgMjcuNjM3OTIyIDM3Ljk3MDcwMyAyNy43OTQ5MjIgQyA0MC45MTY3MDMgMjcuOTkxOTIyIDQwLjg1NzU0NyAzMS4yNDI1NDcgNDEuMDYwNTQ3IDMzLjE4NTU0NyBDIDQxLjE2OTU0NyAzNC4yMjE1NDcgNDIuMTc1NDA2IDM0LjEyMDk4NCA0Mi40NDE0MDYgMzMuMjA4OTg0IEMgNDIuNzI0NDA2IDMyLjIzODk4NCA0My41NjI2NzIgMjguMzcxODU5IDQ2LjUxMzY3MiAyOC42MzA4NTkgQyA0OS42ODA2NzIgMjguOTA4ODU5IDQ4Ljg0NjI2NiAzMi42Mzc3NjYgNDguODIyMjY2IDMzLjYzNDc2NiBDIDQ4Ljc5OTI2NiAzNC41OTc3NjYgNDkuNzI5NzM0IDM0LjU5Njc2NiA1MC4zMDI3MzQgMzMuNjM0NzY2IEMgNTAuOTIwNzM0IDMyLjU5Nzc2NiA1MS44MjUzOTEgMzEuODkyOTA2IDUzLjE1MDM5MSAzMi4yNTM5MDYgQyA1NC4zOTkzOTEgMzIuNTk0OTA2IDU0Ljk3NzU2MiAzMy42MTIzNzUgNTQuOTc2NTYyIDM1LjEwOTM3NSBDIDU0Ljk3NjU2MiAzNS41NzMzNzUgNTQuOTcyNjU2IDM3LjUxOTUzMSA1NC45NzI2NTYgMzcuNTE5NTMxIEMgNTQuOTcyNjU2IDQyLjc3NzUzMSA1My42MTQ5MjIgNDQuNjg2NDM3IDUyLjA0NDkyMiA0Ni44OTg0MzggQyA1MC43Nzc5MjIgNDguNjgxNDM3IDQ4LjkzMzM3NSA1MS40NDA0NTMgNDguNjA5Mzc1IDU0LjQzOTQ1MyBDIDQ4LjU2NDM3NSA1NC44NTc0NTMgNDguNDMwMDYyIDU1LjM0MDY0MSA0OC4xNjQwNjIgNTUuNTU2NjQxIEMgNDcuODk4MDYzIDU1Ljc3MjY0MSA0Ni4yNjc1NzggNTUuOTc2NTYyIDQ2LjI2NzU3OCA1NS45NzY1NjIgQyA0Ni4yNjY1NzggNTUuOTc1NTYzIDQ0LjA2MTg5MSA1NS4wNzY1MzEgNDMuNTg3ODkxIDU0LjUxOTUzMSBDIDQyLjg2Mzg5MSA1My42Njk1MzEgNDEuNjY1MzI4IDUzLjY2NDg1OSA0MC45ODYzMjggNTQuMjU1ODU5IEMgNDAuNjI3MzI4IDU0LjU2Nzg1OSAzOS4yMTMyNjYgNTUuOTc2NTYyIDM4LjMyMjI2NiA1NS45NzY1NjIgTCAzMy4zMjAzMTIgNTUuOTc2NTYyIEMgMzIuNjcyMzEzIDU1Ljk3NjU2MiAzMi41MDE5NjkgNTUuNTQ4NjcyIDMyLjQxNzk2OSA1NS4yNjM2NzIgQyAzMi4xMjY5NjkgNTQuMjgwNjcyIDMxLjU1MjI1IDUyLjg1MjIxOSAzMS4wMzEyNSA1Mi4xOTkyMTkgQyAyOS42ODIyNSA1MC41MDgyMTkgMjkuMzA1NzM0IDQ5Ljk1MjUzMSAyNy44MDI3MzQgNDguNjQ0NTMxIEMgMjYuMjU3NzM0IDQ3LjI5OTUzMSAyNC41NzUyNjYgNDUuOTU0MDE2IDIzLjQ0NzI2NiA0My43OTEwMTYgQyAyMS4wNzAyNjYgMzkuMjMzMDE2IDE3LjU5NzY1NiAzNi44NzU5MjIgMTcuNTk3NjU2IDM1LjA0NDkyMiBDIDE3LjU5NzY1NiAzNC40ODk5MjIgMTguNTEzMjAzIDM0LjI3NzM0NCAxOC43ODMyMDMgMzQuMjc3MzQ0IEMgMTkuMzQ2MjAzIDM0LjI3NzM0NCAyMC4zNzExNzIgMzQuMTExNjcyIDI0LjIwMTE3MiAzNi4yNjM2NzIgQyAyNy4zNjcxNzIgMzguMDQyNjcyIDMwLjExMTIwMyAzNC45ODQ2NTYgMjkuNDA4MjAzIDMyLjM0NzY1NiBDIDI4LjgyMjIwMyAzMC4xNDc2NTYgMjcuMyAyMy43IDI2LjkgMjIuNSBDIDI2LjcgMjEuOSAyNi43NSAyMS40IDI3LjIgMjEuMjUgQyAyNy43IDIxLjEgMjguNCAyMS4yIDI4LjkgMjEuMyB6IE0gMjUuNiAxOS4zIEMgMjcuMyAxOC43IDI5LjcgMTguOCAzMS4xIDE5LjYgQyAzMS40IDIwLjAgMzEuMyAyMC42IDMwLjkgMjAuOCBDIDI5LjYgMjAuMSAyNy42IDIwLjAgMjUuNyAyMC41IEMgMjUuMyAyMC4zIDI1LjMgMTkuNyAyNS42IDE5LjMgeiBNIDM2IDQxIEMgMzUuNDQ4IDQxIDM1IDQxLjQ0OCAzNSA0MiBMIDM1IDUwIEMgMzUgNTAuNTUyIDM1LjQ0OCA1MSAzNiA1MSBDIDM2LjU1MiA1MSAzNyA1MC41NTIgMzcgNTAgTCAzNyA0MiBDIDM3IDQxLjQ0OCAzNi41NTIgNDEgMzYgNDEgeiBNIDQxIDQxIEMgNDAuNDQ4IDQxIDQwIDQxLjQ0OCA0MCA0MiBMIDQwIDUwIEMgNDAgNTAuNTUyIDQwLjQ0OCA1MSA0MSA1MSBDIDQxLjU1MiA1MSA0MiA1MC41NTIgNDIgNTAgTCA0MiA0MiBDIDQyIDQxLjQ0OCA0MS41NTIgNDEgNDEgNDEgeiBNIDQ2IDQxIEMgNDUuNDQ4IDQxIDQ1IDQxLjQ0OCA0NSA0MiBMIDQ1IDUwIEMgNDUgNTAuNTUyIDQ1LjQ0OCA1MSA0NiA1MSBDIDQ2LjU1MiA1MSA0NyA1MC41NTIgNDcgNTAgTCA0NyA0MiBDIDQ3IDQxLjQ0OCA0Ni41NTIgNDEgNDYgNDEgeiIvPgogICAgPCEtLSDogonoibLmuJDlj5jvvJrkuIrmtYXkuIvmt7HvvIzmm7Tnq4vkvZPppbHmu6EgLS0+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9InNraW4iIHgxPSIwIiB5MT0iMCIgeDI9IjAiIHkyPSIxIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjRkRERkMwIi8+CiAgICAgIDxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iI0YyQjk4RCIvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMzYgMzYpIHNjYWxlKDEuMDUpIHRyYW5zbGF0ZSgtMzYgLTM1KSI+CiAgICA8IS0tIOW6leWxguW8leeUqO+8mua3seiJsuaPj+i+ueWQkeWkluaJqeWxle+8jOW9ouaIkOWchua2pumlsea7oeeahOi9ruW7kyAtLT4KICAgIDx1c2UgaHJlZj0iI2hhbmQiIGZpbGw9IiNFMkEwNkMiIHN0cm9rZT0iI0M5N0Y0QSIgc3Ryb2tlLXdpZHRoPSI0LjUiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgogICAgPCEtLSDpobblsYLlvJXnlKjvvJrogonoibLmuJDlj5jkuLvkvZPvvIzplYLnqbrnu4boioLpgI/lh7rlupXlsYLmt7HoibLvvIzlvaLmiJDmjIfnvJ3kuI7mjoznurnnur/mnaEgLS0+CiAgICA8dXNlIGhyZWY9IiNoYW5kIiBmaWxsPSJ1cmwoI3NraW4pIi8+CiAgPC9nPgo8L3N2Zz4K") 45 16, pointer;
+  }
+  * { cursor: var(--cursor-hand) !important; }
+  *:active { cursor: var(--cursor-hand-press) !important; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    background: var(--cream);
+    color: var(--gray);
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+  }
+
+  /* 纯色背景（固定米白，canvas 未启动时的兜底色） */
+  #stage {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--cream);
+    --scene-unit: 200px;
+  }
+
+  /* 全屏特效画布（仿 Mikutap：特效铺满全屏、层层叠加） */
+  #fx {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  /* 分区按钮闪光层：点击/滑过时分区短暂显示半透明白色再淡出 */
+  #zoneflash {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+  }
+  .zone-flash {
+    position: absolute;
+    background: transparent;
+    border-radius: 2vmin;
+    opacity: 0;
+    animation: zoneFade .45s ease-out forwards;
+  }
+  @keyframes zoneFade {
+    0%, 100% { opacity: 0; }
+  }
+
+  /* 点击文字：旧文字上浮淡出，最外层定位与内层抖动互不覆盖。 */
+  #click-text-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .click-claude {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    animation: claudeTextFade .9s ease-out forwards;
+  }
+  .click-claude-float {
+    display: block;
+    animation: claudeTextRise .9s cubic-bezier(.16, .72, .28, 1) forwards;
+  }
+  .click-claude-copy {
+    display: block;
+    color: var(--coral);
+    font: 900 clamp(22px, 4.2vmin, 42px)/1 "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    letter-spacing: .03em;
+    white-space: nowrap;
+    text-shadow: 0 3px 0 var(--amber), 0 9px 20px rgba(135, 131, 126, .3);
+    transform-origin: 50% 58%;
+    will-change: transform;
+  }
+  @keyframes claudeTextFade {
+    0%, 62% { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  @keyframes claudeTextRise {
+    from { transform: translateY(0); }
+    to { transform: translateY(-72px); }
+  }
+
+  /* 摩卡 */
+  #dog {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    will-change: transform;
+    transform-origin: 50% 62%;   /* 节拍压缩围绕狗身体中下部进行 */
+  }
+  #dog-inner {
+    position: relative;
+    width: var(--scene-unit);
+    will-change: transform;   /* 叫弹簧跳由 JS 逐帧驱动（无 CSS transition，保证果断跟手） */
+  }
+  /* 长按果冻层：transform / 变红滤镜全部由 JS 逐帧驱动（Q弹 + 高频抖动） */
+  #dog-jelly {
+    position: relative;
+    will-change: transform, filter;
+  }
+  #dog-inner img {
+    width: 100%;
+    display: block;
+    filter: drop-shadow(0 18px 40px rgba(135, 131, 126, .4));
+  }
+  /* 张嘴图叠在闭嘴图之上：下层始终不透明，只切换上层透明度，
+     避免交叉淡化时两张图都半透明导致整体变透明 */
+  #dog-open {
+    position: absolute;
+    left: 0; top: 0;
+    opacity: 0;
+    transition: opacity .08s linear;
+  }
+  #dog-inner.bark-image #dog-open { opacity: 1; }
+
+  /* 顶部控制：互动时隐藏，闲置 2 秒后由 JS 淡入 */
+  #top-controls {
+    position: absolute;
+    top: max(14px, env(safe-area-inset-top));
+    left: max(14px, env(safe-area-inset-left));
+    right: max(14px, env(safe-area-inset-right));
+    z-index: 80;                      /* 高于分享弹层(60)与底部广告(70)，确保声音按钮始终可点 */
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+    /* 投影放在容器上：按钮本体用了 clip-path 切角，box-shadow 会被一起裁掉，
+       容器的 drop-shadow 才能贴合八边形轮廓 */
+    filter: drop-shadow(0 6px 14px rgba(135, 131, 126, .22));
+    transition: opacity .5s ease, transform .5s cubic-bezier(.2, .8, .2, 1);
+  }
+  #top-controls.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  #top-controls.is-revealing-fast {
+    transition-duration: .2s;
+  }
+  .control-group {
+    display: flex;
+    gap: 8px;
+  }
+  /* 几何化切角按钮：八边形轮廓呼应全屏几何特效（hexagon / diamond 粒子）。
+     按钮本体背景充当“描边色”，::before 用缩小一号的同款切角多边形铺底色，
+     描边因此能严格贴合切角（普通 border 做不到），颜色用变量一键切换 */
+  .control-button {
+    --btn-edge: rgba(135, 131, 126, .72);   /* 描边色 */
+    --btn-fill: rgba(255, 242, 220, .92);   /* 底色 */
+    position: relative;
+    min-width: 68px;
+    min-height: 44px;
+    padding: 8px 12px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: var(--gray);
+    background: var(--btn-edge);
+    clip-path: polygon(10px 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px),
+                       calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px), 0 10px);
+    font: 700 13px/1 "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    pointer-events: auto;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transform: scale(var(--rhythm-scale, 1));
+    transition: color .2s ease, background .2s ease;
+  }
+  .control-button::before {
+    content: "";
+    position: absolute;
+    inset: 2px;
+    z-index: -1;
+    background: var(--btn-fill);
+    clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 8px, 100% calc(100% - 8px),
+                       calc(100% - 8px) 100%, 8px 100%, 0 calc(100% - 8px), 0 8px);
+    transition: background .2s ease;
+  }
+  /* 律动缩放由 JS 使用 Web Audio 时钟逐帧写入，避免切换静音时相位重置 */
+  .control-button:active { transform: scale(.94); }
+  .control-button:focus-visible {
+    outline: 3px solid rgba(62, 123, 250, .38);
+    outline-offset: 2px;
+  }
+  /* 悬停描边变琥珀色（仅桌面端）；.is-muted 规则在更后面，静音态优先 */
+  @media (hover: hover) {
+    .control-button:hover { --btn-edge: rgba(255, 180, 0, .85); }
+  }
+  .control-button svg {
+    width: 20px;
+    height: 20px;
+    overflow: visible;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .control-button .mute-slash {
+    opacity: 0;
+    stroke: var(--coral);
+    stroke-width: 2.6;
+    transition: opacity .2s ease;
+  }
+  .control-button.is-muted {
+    --btn-edge: rgba(255, 90, 95, .68);
+    --btn-fill: rgba(255, 255, 255, .94);
+    color: var(--coral);
+  }
+  .control-button.is-muted .mute-slash { opacity: 1; }
+  /* 圆形图标按钮：仅含图标的左上角按钮（音乐 / 音效） */
+  .control-button.icon-button {
+    min-width: 0;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border-radius: 50%;
+    clip-path: none;
+  }
+  .control-button.icon-button::before {
+    border-radius: 50%;
+    clip-path: none;
+  }
+  @media (max-width: 430px) {
+    #top-controls {
+      top: max(10px, env(safe-area-inset-top));
+      left: max(10px, env(safe-area-inset-left));
+      right: max(10px, env(safe-area-inset-right));
+    }
+    .control-button {
+      min-width: 44px;
+      padding-inline: 10px;
+    }
+    .control-button span { display: none; }
+  }
+
+  /* 首次进入欢迎界面：仅一个 3D 斜视按钮 */
+  #welcome-ad {
+    position: absolute;
+    inset: 0;
+    z-index: 90;            /* 高于分享弹层(60)/广告(70)/声音按钮(80)，息屏恢复时完全盖住它们 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 26px;
+    padding: 24px;
+    background: rgba(255, 242, 220, .96);
+    transition: opacity .45s ease, visibility .45s ease;
+  }
+  #welcome-ad.hide {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+  /* 3D 45° 斜视按钮：圆柱形按钮（顶面 + 侧面 + 底面），按下时顶盖下沉 */
+  .start-3d {
+    width: clamp(150px, 42vmin, 220px);
+    aspect-ratio: 1;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    filter: drop-shadow(0 10px 18px rgba(135, 131, 126, .18));
+  }
+  .start-3d:disabled { opacity: .92; }
+  .start-3d-art { width: 100%; height: 100%; display: block; overflow: visible; }
+  .start-3d-shadow { fill: rgba(79, 73, 66, .24); transition: opacity .12s ease; }
+  .start-3d-base { fill: #b37400; }
+  .start-3d-side { fill: #c98700; }
+  .start-3d-cap-side { fill: #e89a1e; }
+  .start-3d-cap-top { fill: #ffc54a; }
+  .start-3d-cap-gloss { fill: #ffe08a; opacity: .85; }
+  .start-3d-cap { transition: transform .1s cubic-bezier(.2, .8, .2, 1); }
+  .start-3d:not(:disabled):active .start-3d-cap,
+  .start-3d.is-pressed .start-3d-cap { transform: translateY(22px); }
+  .start-3d:not(:disabled):active .start-3d-shadow,
+  .start-3d.is-pressed .start-3d-shadow { opacity: .14; }
+  .start-3d:focus-visible {
+    outline: 3px solid rgba(62, 123, 250, .4);
+    outline-offset: 6px;
+    border-radius: 50%;
+  }
+  .welcome-status {
+    color: var(--gray);
+    font: 600 13px/1.4 "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    letter-spacing: .12em;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  .welcome-status.hide { visibility: hidden; }
+  @keyframes pulse { 50% { opacity: .35; } }
+
+  /* 欢迎界面“点击开始”：沿用点击弹出字的排版（珊瑚红 + 琥珀描边阴影），
+     保持一种静态的夸张变形（拉伸 + 倾斜 + 旋转），不做动画。 */
+  .welcome-cta {
+    color: var(--coral);
+    font: 900 clamp(28px, 6.5vmin, 60px)/1 "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    letter-spacing: .08em;
+    white-space: nowrap;
+    text-shadow: 0 4px 0 var(--amber), 0 12px 26px rgba(135, 131, 126, .32);
+    transform-origin: 50% 70%;
+    transform: scale(1.25, .82) skewX(-10deg) rotate(-3deg);
+  }
+  .welcome-cta.hide { visibility: hidden; }
+
+  /* ============ 尾巴卷度 HUD（右上角实时累加，纯文字）============ */
+  #energy-hud {
+    position: absolute;
+    top: max(16px, env(safe-area-inset-top));
+    right: max(16px, env(safe-area-inset-right));
+    z-index: 19;
+    display: none;
+    align-items: baseline;
+    gap: 6px;
+    color: var(--coral);
+    font: 900 26px/1 "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    letter-spacing: .02em;
+    text-shadow: 0 2px 0 var(--amber), 0 5px 12px rgba(135, 131, 126, .35);
+    pointer-events: none;
+    transform-origin: 100% 50%;
+    transform: scale(var(--energy-scale, 1));
+    transition: transform .08s ease;
+  }
+  #energy-hud.is-on { display: inline-flex; }
+  #energy-hud .energy-label {
+    color: var(--gray);
+    font: 700 12px/1 "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    letter-spacing: .14em;
+    text-shadow: 0 1px 2px rgba(255, 242, 220, .8);
+  }
+  /* 每次点击飘出的 +N */
+  .energy-pop {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    color: var(--coral);
+    font: 900 18px/1 "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    text-shadow: 0 2px 0 var(--amber);
+    pointer-events: none;
+    animation: energyPopRise .8s ease-out forwards;
+  }
+  @keyframes energyPopRise {
+    0%   { opacity: 0; transform: translateY(6px) scale(.6); }
+    20%  { opacity: 1; transform: translateY(0) scale(1.1); }
+    100% { opacity: 0; transform: translateY(-34px) scale(.9); }
+  }
+
+  /* ============ 闲置分享弹层 ============ */
+  #share-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(79, 73, 66, .55);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+  #share-overlay.is-open { display: flex; }
+  /* 卡片本身随节拍放大缩小 + 左右摆动（transform 由 tick() 每帧写入） */
+  #share-card {
+    position: relative;
+    width: min(72vmin, 420px);   /* 卡片为 9:16，宽度收敛一些给提示/按钮留纵向空间 */
+    will-change: transform;
+    transform-origin: 50% 58%;
+    filter: drop-shadow(0 24px 50px rgba(0, 0, 0, .42));
+  }
+  #share-card .share-frame {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: var(--cream);
+    line-height: 0;
+  }
+  #share-card img.share-art {
+    display: block;
+    width: 100%;
+    height: auto;
+    -webkit-touch-callout: default;   /* 允许 iOS 长按保存 */
+    -webkit-user-select: auto;
+    user-select: auto;
+  }
+  #share-card .share-hint {
+    margin-top: 18px;
+    text-align: center;
+    color: #fff2dc;
+    font: 600 14px/1.4 "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    letter-spacing: .08em;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, .35);
+  }
+  .share-actions {
+    margin-top: 14px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+  }
+  .share-btn {
+    padding: 12px 26px;
+    border: none;
+    color: #fff2dc;
+    background: var(--amber);
+    clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px),
+                       calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
+    font: 800 15px/1 "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    letter-spacing: .06em;
+    pointer-events: auto;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .share-btn.secondary { background: rgba(255, 242, 220, .24); color: #fff2dc; }
+  .share-btn:active { transform: scale(.95); }
+  .share-close {
+    position: absolute;
+    top: -14px;
+    right: -14px;
+    z-index: 5;
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    color: #4f4942;
+    background: #fff2dc;
+    font: 800 22px/36px "PingFang SC", system-ui, sans-serif;
+    cursor: pointer;
+    pointer-events: auto;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .25);
+  }
+  .share-close:active { transform: scale(.92); }
+</style>
+</head>
+<body>
+  <div id="stage">
+    <canvas id="fx"></canvas>
+    <div id="zoneflash"></div>
+    <div id="click-text-layer" aria-hidden="true"></div>
+
+    <div id="dog">
+      <div id="dog-inner">
+        <div id="dog-jelly">
+          <img id="dog-close" src="Image/moka_close_mouth.png" alt="摩卡" draggable="false" />
+          <img id="dog-open" src="Image/moka_open_mouth.png" alt="" draggable="false" />
+        </div>
+      </div>
+    </div>
+
+    <div id="top-controls" class="is-visible" aria-label="声音与导航控制">
+      <div id="audio-controls" class="control-group">
+        <button id="music-toggle" class="control-button icon-button" type="button" aria-label="关闭音乐" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 18V5l10-2v13" />
+            <circle cx="6" cy="18" r="3" />
+            <circle cx="16" cy="16" r="3" />
+            <path class="mute-slash" d="M4 3l16 18" />
+          </svg>
+        </button>
+        <button id="sfx-toggle" class="control-button icon-button" type="button" aria-label="关闭音效" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 9v6h4l5 4V5L9 9H5z" />
+            <path d="M17 9.5a4 4 0 010 5" />
+            <path class="mute-slash" d="M4 3l16 18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="energy-hud" aria-live="polite">
+      <span class="energy-label">尾巴卷度</span>
+      <span id="energy-num">0</span>
+    </div>
+
+    <div id="share-overlay" role="dialog" aria-modal="true" aria-label="分享我的尾巴卷度">
+      <div id="share-card">
+        <button id="share-close" class="share-close" type="button" aria-label="关闭">×</button>
+        <div class="share-frame">
+          <img id="share-art" class="share-art" alt="我的摩卡尾巴卷度" draggable="false" />
+        </div>
+        <div id="share-hint" class="share-hint">长按图片即可保存到相册</div>
+        <div class="share-actions" id="share-actions">
+          <button id="share-download" class="share-btn" type="button">下载图片</button>
+          <button id="share-dismiss" class="share-btn secondary" type="button">继续玩</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="welcome-ad" role="dialog" aria-modal="true">
+      <button id="welcome-enter" class="start-3d" type="button" aria-label="进入摩卡叫" disabled>
+        <svg class="start-3d-art" viewBox="0 0 140 140" aria-hidden="true">
+          <ellipse class="start-3d-shadow" cx="70" cy="112" rx="50" ry="12"/>
+          <ellipse class="start-3d-base" cx="70" cy="86" rx="50" ry="22"/>
+          <rect class="start-3d-side" x="20" y="62" width="100" height="24"/>
+          <g class="start-3d-cap">
+            <rect class="start-3d-cap-side" x="20" y="40" width="100" height="22"/>
+            <ellipse class="start-3d-cap-top" cx="70" cy="40" rx="50" ry="22"/>
+            <ellipse class="start-3d-cap-gloss" cx="60" cy="33" rx="28" ry="9"/>
+          </g>
+        </svg>
+      </button>
+      <div id="welcome-cta" class="welcome-cta hide">按下开始</div>
+      <div id="welcome-status" class="welcome-status">资源加载中…</div>
+    </div>
+  </div>
+
+  <script src="audio-data.js"></script>
+  <script src="dog-data.js"></script>
+  <script src="qr-data.js"></script>
+  <script src="main.js?v=moka1"></script>
+</body>
+</html>
