@@ -451,6 +451,55 @@ function initAudio() {
   for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
 }
 
+/**
+ * Safari / iOS / 微信内置浏览器：AudioContext 创建后默认 suspended，
+ * 仅调用 resume() 不够，必须在用户手势的同步调用栈里真正 start() 一段音频。
+ * 否则点击只会走视觉回退（张嘴无声）。
+ */
+let audioUnlockPromise = null;
+function unlockAudio() {
+  if (!ctx) return Promise.resolve(false);
+  if (ctx.state === 'running') return Promise.resolve(true);
+
+  // 同步播放 1 帧静音：这是 iOS 解锁 Web Audio 的关键手势动作
+  try {
+    const silent = ctx.createBuffer(1, 1, ctx.sampleRate || 44100);
+    const src = ctx.createBufferSource();
+    src.buffer = silent;
+    src.connect(ctx.destination);
+    src.start(0);
+  } catch (_) { /* 忽略：部分旧环境不允许在 suspended 时 start */ }
+
+  if (!audioUnlockPromise || ctx.state === 'suspended' || ctx.state === 'interrupted') {
+    audioUnlockPromise = ctx.resume()
+      .then(() => ctx.state === 'running')
+      .catch(() => false)
+      .finally(() => { audioUnlockPromise = null; });
+  }
+  return audioUnlockPromise;
+}
+
+function bindAudioUnlockGestures() {
+  const unlock = () => { unlockAudio(); };
+  // pointer + touch 双绑：覆盖桌面 Safari、iPhone Safari、微信 webview
+  for (const type of ['pointerdown', 'touchstart', 'mousedown']) {
+    window.addEventListener(type, unlock, { capture: true, passive: true });
+  }
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') unlockAudio();
+  });
+  // 微信 iOS：等 JSSDK bridge 就绪后再抢一次解锁
+  const unlockWeixin = () => {
+    try {
+      if (window.WeixinJSBridge) {
+        window.WeixinJSBridge.invoke('getNetworkType', {}, () => { unlockAudio(); });
+      }
+    } catch (_) { /* 非微信环境 */ }
+  };
+  if (window.WeixinJSBridge) unlockWeixin();
+  else document.addEventListener('WeixinJSBridgeReady', unlockWeixin, { once: true });
+}
+
 function b64ToArrayBuffer(b64) {
   const bin = atob(b64);
   const bytes = new Uint8Array(bin.length);
@@ -2025,7 +2074,9 @@ function enqueueActivation(zi, pointerId) {
   inputQueue.push(entry);
   reflowQueuedInputTimes();
   flashZone(zi);
-  if (ctx.state !== 'running') {
+  if (!ctx || ctx.state !== 'running') {
+    // 手势内立刻解锁；若仍未 running，先给视觉反馈，解锁成功后由调度器补播队列
+    unlockAudio();
     entry.visualFallback = true;
     openMouth(280);
     barkPopVel = Math.min(barkPopVel + BARK_KICK, BARK_KICK_MAX);
@@ -2583,6 +2634,8 @@ stage.addEventListener('pointerdown', (e) => {
     return;
   }
   markActivity();
+  // 必须在手势同步栈内解锁，否则 iOS 会一直 suspended → 只有嘴动没有声音
+  unlockAudio();
   if (!started || !buffers.da) {
     pointers.set(e.pointerId, {
       zone: -1,
@@ -2596,7 +2649,6 @@ stage.addEventListener('pointerdown', (e) => {
     updatePinch();
     return;
   }
-  if (ctx.state === 'suspended') ctx.resume().catch(() => {});
   spawnClaudeText(e.clientX, e.clientY);
   try { stage.setPointerCapture(e.pointerId); } catch (_) { /* 某些旧浏览器不支持 */ }
   pointers.set(
@@ -2668,8 +2720,8 @@ async function start() {
   started = true;
   hideControlsUntilIdle();
 
-  // 资源已在欢迎界面预加载完毕；这里只负责唤醒上下文并启动节拍调度。
-  if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+  // 资源已在欢迎界面预加载完毕；这里确保音频已解锁再启动节拍调度。
+  await unlockAudio();
 
   startTime = ctx.currentTime + 0.12;
   nextNoteTime = startTime;
@@ -2704,7 +2756,7 @@ function rebaseBeatClock() {
 async function restartAudio() {
   try { if (ctx) await ctx.close(); } catch (_) { /* 已关闭 */ }
   initAudio();                          // 新建 ctx + 总线 + 压缩器 + 噪声 buffer
-  if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+  await unlockAudio();
   try { await loadSamples(); } catch (_) { /* 解码失败兜底：不阻塞，下次手势再试 */ }
   rebaseBeatClock();
 }
@@ -2768,8 +2820,9 @@ function preloadImages() {
 function preloadResources() {
   resourcesReady = (async () => {
     initAudio();
-    // Safari 与后台标签页可能让 resume() 持续 pending；不阻塞素材解码。
-    if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+    bindAudioUnlockGestures();
+    // 页面加载阶段 resume 多半会被 Safari 拒绝；真正解锁靠用户手势。
+    unlockAudio().catch(() => {});
     await Promise.all([loadSamples(), preloadImages()]);
   })().catch((error) => {
     console.error('[摩卡Tap] 资源预加载失败。', error);
@@ -2822,31 +2875,32 @@ if (resourcesReady && welcomeEnter) {
 
 if (welcomeAd && welcomeEnter) {
   welcomeAd.addEventListener('pointerdown', (event) => event.stopPropagation());
-  // 必须在用户手势（pointerdown）内同步唤醒音频上下文，
-  // 否则 Safari/严格浏览器会拒绝 resume()，导致进入后无声。
-  welcomeEnter.addEventListener('pointerdown', () => {
-    if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
-  });
+  // 必须在用户手势（pointerdown / touchstart）内同步解锁音频，
+  // 否则 Safari / iOS / 微信会拒绝，进入后只有动画没有声音。
+  const unlockFromWelcomeGesture = () => { unlockAudio(); };
+  welcomeEnter.addEventListener('pointerdown', unlockFromWelcomeGesture);
+  welcomeEnter.addEventListener('touchstart', unlockFromWelcomeGesture, { passive: true });
   welcomeEnter.addEventListener('click', async (event) => {
     event.preventDefault();
     event.stopPropagation();
     if (welcomeEnter.disabled) return;
-    // 再次确保上下文已唤醒（手势内）
-    if (ctx && ctx.state === 'suspended') ctx.resume().catch(() => {});
+    // 手势栈内再抢一次解锁（部分 iOS 版本对 click 更认）
+    const unlockWait = unlockAudio();
     // 锁定“按下”形态，短暂展示后再切场
     welcomeEnter.classList.add('is-pressed');
     if (reentryMode) {
       // 息屏恢复后的二次进入：重建音频上下文 + 重新解码样本（等价于首次加载逻辑），
       // 重对齐节拍时钟；尾巴卷度等游戏进度保持不变。
       reentryMode = false;
+      await unlockWait;
       await restartAudio();
       await new Promise((resolve) => window.setTimeout(resolve, 160));
       // 重新计时闲置，避免一回来就立刻弹分享卡
       lastActivityAt = nowSec();
     } else {
-      await resourcesReady;
+      await Promise.all([resourcesReady, unlockWait]);
       await new Promise((resolve) => window.setTimeout(resolve, 160));
-      start();
+      await start();
     }
     welcomeAd.classList.add('hide');
     window.setTimeout(() => { welcomeAd.hidden = true; }, 450);
