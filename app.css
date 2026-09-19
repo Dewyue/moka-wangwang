@@ -44,13 +44,16 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
   background: rgba(255,255,255,.9);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border);
-  height: 56px;
+  min-height: 56px;
 }
 .top-inner {
   max-width: 980px; margin: 0 auto; padding: 0 24px;
   height: 56px; display: flex; align-items: center; justify-content: space-between;
 }
 .brand { font-weight: 600; font-size: 15px; }
+.nav {
+  display: flex; flex-wrap: wrap; gap: 2px; justify-content: center;
+}
 .nav a {
   border-radius: 999px; padding: 6px 12px; font-size: 13px; color: var(--muted); font-weight: 500;
 }
@@ -58,7 +61,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-
 .bottom {
   position: fixed; inset: auto 0 0 0; z-index: 20;
   background: #fff; border-top: 1px solid var(--border);
-  display: grid; grid-template-columns: repeat(4, 1fr);
+  display: grid; grid-template-columns: repeat(5, 1fr);
   padding-bottom: env(safe-area-inset-bottom);
 }
 .bottom a {
@@ -91,6 +94,7 @@ h1 { font-size: 28px; letter-spacing: -0.03em; margin: 0; font-weight: 600; }
 .card { padding: 16px 20px; }
 .field { display: block; font-size: 12px; color: var(--muted); margin-top: 12px; }
 .field input, .field select, .field textarea { width: 100%; height: 40px; margin-top: 4px; }
+.field input[type="radio"] { width: auto; height: auto; margin: 0; }
 .field textarea { height: auto; min-height: 72px; }
 .skills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .add-tag { margin-top: 12px; }
@@ -100,6 +104,15 @@ h1 { font-size: 28px; letter-spacing: -0.03em; margin: 0; font-weight: 600; }
   background: var(--muted-bg); color: var(--muted); font-weight: 500;
 }
 .chip.on { background: var(--accent); color: #fff; }
+a.chip { display: inline-flex; align-items: center; }
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 20px; }
+.stat { font-size: 28px; font-weight: 600; letter-spacing: -0.04em; margin: 4px 0 0; }
+.rank { width: 28px; font-weight: 600; color: var(--muted); flex: none; }
+.hot { color: var(--danger) !important; }
+.pill.hot { background: #ffeceb; color: var(--danger); }
+@media (min-width: 800px) {
+  .stats { grid-template-columns: repeat(4, 1fr); }
+}
 .msg-me, .msg-them { max-width: 78%; padding: 8px 14px; font-size: 14px; }
 .msg-me { margin-left: auto; background: var(--accent); color: #fff; border-radius: 20px 20px 6px 20px; }
 .msg-them { background: #fff; border-radius: 20px 20px 20px 6px; }
