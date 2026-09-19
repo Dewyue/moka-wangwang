@@ -15,7 +15,7 @@ const reviewsY = ydoc.getArray("reviews");
 const ledgerY = ydoc.getArray("ledger");
 
 const persist = new IndexeddbPersistence(ROOM, ydoc);
-const provider = new WebsocketProvider("wss://demos.yjs.dev", ROOM, ydoc);
+const provider = new WebsocketProvider("wss://demos.yjs.dev", ROOM, ydoc, { connect: false });
 const syncEl = () => document.getElementById("sync");
 function setSync(ok, text) {
   const el = syncEl();
@@ -28,12 +28,13 @@ provider.on("status", (e) => {
 });
 provider.on("sync", () => {
   if (usersY.size === 0) seed();
-  render();
+  scheduleRender();
 });
 persist.on("synced", () => {
   if (usersY.size === 0) seed();
-  render();
+  scheduleRender();
 });
+setTimeout(() => provider.connect(), 0);
 
 function uid(prefix="id") { return prefix + "-" + Math.random().toString(36).slice(2, 10); }
 function now() { return Date.now(); }
@@ -79,11 +80,7 @@ function me() {
 function setMe(id) {
   if (id) localStorage.setItem(SESSION_KEY, id);
   else localStorage.removeItem(SESSION_KEY);
-  if (id) {
-    provider.awareness.setLocalStateField("uid", id);
-    const u = usersY.get(id);
-    if (u) usersY.set(id, { ...u, lastSeenAt: now() });
-  } else provider.awareness.setLocalStateField("uid", null);
+  provider.awareness.setLocalStateField("uid", id || null);
 }
 function onlineIds() {
   const s = new Set();
@@ -250,18 +247,32 @@ function personView(u, id) {
   `;
 }
 
+function allSkills() {
+  const set = new Set(SKILLS);
+  for (const u of usersY.values()) {
+    for (const o of u.offers || []) if (o.skill) set.add(o.skill);
+  }
+  return [...set];
+}
+
 function offerEditor(u) {
   const teach = new Set((u.offers||[]).filter((o)=>o.kind==="teach").map((o)=>o.skill));
   const learn = new Set((u.offers||[]).filter((o)=>o.kind==="learn").map((o)=>o.skill));
+  const skills = allSkills();
   const block = (kind, title, set) => `
     <div class="tile card" style="margin-top:12px">
       <strong>${title}</strong>
+      <p class="sub">点选，或输入自定义标签后回车。</p>
       <div class="skills" data-kind="${kind}">
-        ${SKILLS.map((s)=>`<button type="button" class="chip ${set.has(s)?"on":""}" data-skill="${s}">${s}</button>`).join("")}
+        ${skills.map((s)=>`<button type="button" class="chip ${set.has(s)?"on":""}" data-skill="${esc(s)}">${esc(s)}</button>`).join("")}
+      </div>
+      <div class="add-tag">
+        <input data-custom-kind="${kind}" maxlength="16" placeholder="自定义标签，回车添加" />
       </div>
     </div>`;
   return `<form data-offers>${block("teach","我能教的",teach)}${block("learn","我想学的",learn)}
-    <button class="btn" style="margin-top:16px" type="submit">保存技能</button></form>`;
+    <p class="err" data-offer-err hidden></p>
+    <button class="btn" style="margin-top:16px" type="submit">保存并进入发现</button></form>`;
 }
 
 function inboxView(u) {
@@ -386,19 +397,35 @@ function threadOf(a,b) {
   return t;
 }
 
-function render() {
+let renderTimer = 0;
+let lastPainted = "";
+function scheduleRender(force = false) {
+  if (renderTimer) return;
+  renderTimer = requestAnimationFrame(() => {
+    renderTimer = 0;
+    render(force);
+  });
+}
+
+function render(force = false) {
   const app = document.getElementById("app");
   if (!app) return;
   const r = route();
+  const key = location.hash || "#/";
+  const typing = document.activeElement && app.contains(document.activeElement) &&
+    ["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName);
+  if (!force && typing && key === lastPainted) return;
+
   const u = me();
   if (!u && !["","login","register"].includes(r.path)) { go("#/login"); return; }
   if (u && ["","login","register"].includes(r.path)) { go(needOnboard(u)?"#/onboarding":"#/discover"); return; }
-  if (u && needOnboard(u) && r.path!=="onboarding") { go("#/onboarding"); }
+  if (u && needOnboard(u) && r.path!=="onboarding" && r.path!=="me") { go("#/onboarding"); return; }
+
+  lastPainted = key;
   if (!u) {
     app.innerHTML = r.path==="login" ? authForm("login") : r.path==="register" ? authForm("register") : land();
     return;
   }
-  setMe(u.id);
   let inner = "", active = r.path;
   if (r.path==="discover") inner = matchList(u);
   else if (r.path==="people") inner = personView(u, r.id);
@@ -407,7 +434,7 @@ function render() {
   else if (r.path==="swaps" && r.id) { inner = swapDetail(u, r.id); active="swaps"; }
   else if (r.path==="swaps") inner = swapsView(u);
   else if (r.path==="credits") { inner = creditsView(u); active="me"; }
-  else if (r.path==="onboarding") inner = `<h1>你能教什么，想学什么？</h1><p class="sub">各选至少一项，才能进入发现。</p>${offerEditor(u)}`;
+  else if (r.path==="onboarding") inner = `<h1>你能教什么，想学什么？</h1><p class="sub">各选至少一项。可以点现成标签，也可以自己输入。</p>${offerEditor(u)}`;
   else { inner = meView(u); active="me"; }
   app.innerHTML = shell(active, inner);
 }
@@ -423,8 +450,10 @@ document.addEventListener("submit", (e) => {
     const err = f.querySelector("[data-err]");
     if (f.dataset.auth==="register") {
       if ([...usersY.values()].some((u)=>u.email===email)) { err.textContent="这个邮箱已经注册过了"; return; }
+      const btn = f.querySelector("button[type=submit]");
+      if (btn) { btn.disabled = true; btn.textContent = "进入中…"; }
       const user = { id:uid("u"), email, password, name:String(fd.get("name")||"新用户").slice(0,20), city:String(fd.get("city")||"线上"), bio:"", hue:[214,18,330,152,200][Math.floor(Math.random()*5)], credits:4, offers:[], lastSeenAt: now() };
-      usersY.set(user.id, user); setMe(user.id); go("#/onboarding"); return;
+      usersY.set(user.id, user); setMe(user.id); go("#/onboarding"); render(true); return;
     }
     const user = [...usersY.values()].find((u)=>u.email===email && u.password===password);
     if (!user) { err.textContent="邮箱或密码不对"; return; }
@@ -432,14 +461,21 @@ document.addEventListener("submit", (e) => {
   }
   if (f.dataset.offers) {
     const u = me();
-    const teach = [...f.querySelectorAll('[data-kind="teach"] .chip.on')].map((el)=>el.dataset.skill);
-    const learn = [...f.querySelectorAll('[data-kind="learn"] .chip.on')].map((el)=>el.dataset.skill);
-    if (!teach.length || !learn.length) { alert("请至少选择一个能教的和一个想学的"); return; }
+    if (!u) return;
+    const teach = [...f.querySelectorAll('[data-kind="teach"] .chip.on')].map((el)=>el.dataset.skill).filter(Boolean);
+    const learn = [...f.querySelectorAll('[data-kind="learn"] .chip.on')].map((el)=>el.dataset.skill).filter(Boolean);
+    const err = f.querySelector("[data-offer-err]");
+    if (!teach.length || !learn.length) {
+      if (err) { err.hidden = false; err.textContent = "请至少各选一个能教的和想学的（可自定义）"; }
+      return;
+    }
     usersY.set(u.id, { ...u, offers: [
       ...teach.map((skill)=>({id:uid("o"),skill,kind:"teach",level:"进阶",blurb:"",online:true,offline:false})),
       ...learn.map((skill)=>({id:uid("o"),skill,kind:"learn",level:"入门",blurb:"",online:true,offline:false})),
     ]});
-    go("#/discover"); return;
+    go("#/discover");
+    render(true);
+    return;
   }
   if (f.dataset.profile) {
     const u = me();
@@ -483,10 +519,41 @@ document.addEventListener("submit", (e) => {
   }
 });
 
+function addCustomChip(input) {
+  const kind = input.dataset.customKind;
+  const name = String(input.value || "").trim().slice(0, 16);
+  if (!kind || !name) return;
+  const box = input.closest(".tile")?.querySelector(`[data-kind="${kind}"]`);
+  if (!box) return;
+  const exists = [...box.querySelectorAll(".chip")].find((c) => c.dataset.skill === name);
+  if (exists) exists.classList.add("on");
+  else {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "chip on";
+    btn.dataset.skill = name;
+    btn.textContent = name;
+    box.appendChild(btn);
+  }
+  input.value = "";
+}
+
+document.addEventListener("keydown", (e) => {
+  const input = e.target;
+  if (!(input instanceof HTMLInputElement) || !input.dataset.customKind) return;
+  if (e.key !== "Enter") return;
+  e.preventDefault();
+  addCustomChip(input);
+});
+
 document.addEventListener("click", (e) => {
   const t = e.target.closest("button");
   if (!t) return;
-  if (t.dataset.skill && t.closest("[data-kind]")) { t.classList.toggle("on"); return; }
+  if (t.dataset.skill && t.closest("[data-kind]")) {
+    e.preventDefault();
+    t.classList.toggle("on");
+    return;
+  }
   if (t.dataset.logout) { setMe(null); go("#/"); return; }
   if (t.dataset.msg) { const th = threadOf(me().id, t.dataset.msg); go("#/inbox/"+th.id); return; }
   if (t.dataset.accept) {
@@ -520,7 +587,7 @@ document.addEventListener("click", (e) => {
   }
 });
 
-ydoc.on("update", () => render());
-provider.awareness.on("change", () => render());
-window.addEventListener("hashchange", render);
-render();
+ydoc.on("update", () => scheduleRender());
+provider.awareness.on("change", () => scheduleRender());
+window.addEventListener("hashchange", () => render(true));
+render(true);
