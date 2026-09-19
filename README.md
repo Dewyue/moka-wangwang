@@ -1,14 +1,10 @@
 # 技能互换
 
-发布「我能教的」和「我想学的」，匹配后聊天、约课、互评。
+地址不变：https://dewyue.github.io/moka-wangwang/
 
-## 在线地址
-
-https://dewyue.github.io/moka-wangwang/
+全站用户共享一份实时数据（Yjs 房间 `dewyue-jineng-huan-v1`）。手机和电脑、两个浏览器账号可以同时在线互发消息、提互换。
 
 演示号：`demo@jineng.local` / `demo1234`  
-互聊号：`zhou@jineng.local` / `demo1234`
+互聊：`zhou@jineng.local` / `demo1234`
 
-数据存在浏览器本地。两个标签页用不同账号即可互发消息。
-
-推送到 `main` 后，GitHub Pages 会自动更新同一网址。
+右上角显示「多人实时已连接」即同步成功。

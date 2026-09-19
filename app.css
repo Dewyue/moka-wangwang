@@ -105,6 +105,13 @@ h1 { font-size: 28px; letter-spacing: -0.03em; margin: 0; font-weight: 600; }
 .composer { display: flex; gap: 8px; margin-top: 16px; position: sticky; bottom: 64px; }
 .composer input { flex: 1; height: 44px; border-radius: 999px; background: #fff; }
 .err { color: var(--danger); font-size: 13px; }
+.sync {
+  position: fixed; top: 8px; right: 12px; z-index: 30;
+  font-size: 11px; font-weight: 600; color: var(--muted);
+  background: #fff; border-radius: 999px; padding: 4px 10px;
+}
+.sync.on { color: var(--accent); }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); display: inline-block; margin-right: 6px; }
 .hero { background: #fff; min-height: 100dvh; padding-bottom: 48px; }
 .hero-inner { max-width: 980px; margin: 0 auto; padding: 20px 24px 64px; }
 .hero h1 { font-size: 40px; max-width: 12em; line-height: 1.15; }
