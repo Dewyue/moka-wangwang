@@ -266,7 +266,7 @@ function land() {
       <div style="background:var(--muted-bg);border-radius:28px;padding:24px">
         <p style="font-size:12px;color:var(--accent);font-weight:600">匹配</p>
         <p style="font-size:22px;font-weight:600;margin:8px 0">双向优先</p>
-        <p class="sub">你教的 ∩ 对方想学的，对不上就用课时。</p>
+        <p class="sub">你教的，正好是对方想学的；对不上就用课时。</p>
       </div>
       <div style="background:var(--muted-bg);border-radius:28px;padding:24px">
         <p style="font-size:12px;color:var(--ink);font-weight:600">会话与约课</p>
@@ -346,9 +346,12 @@ function practiceView(u) {
   const others = list(usersY).filter((x)=>x.id!==u.id);
   const mine = jlist(projectsY).filter((p)=>p.userId===u.id).sort((a,b)=>b.at-a.at);
   const myDuels = list(duelsY).filter((d)=>d.a===u.id||d.b===u.id).sort((a,b)=>b.at-a.at);
+  const tip = sessionStorage.getItem("quizTip");
+  if (tip) sessionStorage.removeItem("quizTip");
   return `
     <h1>练习场</h1>
     <p class="sub">小测巩固互换内容。对决赢了拿币。作品会出现在主页。</p>
+    ${tip?`<div class="tile card" style="margin-top:16px;background:var(--accent-soft)"><strong>${esc(tip)}</strong></div>`:""}
     <div class="tile card" style="margin-top:16px">
       <strong>快速测验</strong>
       <p class="sub">5 道题。全对 +30 币，及格 +15。</p>
@@ -804,7 +807,7 @@ document.addEventListener("submit", (e) => {
       duelsY.set(d.id, next);
     }
     pushAct(u.id, `${u.name} 完成了 ${skill} 小测 ${score}/5`);
-    alert(`${skill}：${score}/5，+${coins} 技能币`);
+    sessionStorage.setItem("quizTip", `${skill}：${score}/5，+${coins} 技能币`);
     go("#/practice");
     return;
   }
